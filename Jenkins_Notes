@@ -229,7 +229,7 @@ pipeline {
     }
 }
 
-Declarative Pipeline with git checkout stage and build stage.
+Declarative Pipeline with 2 stages one is  git checkout by printing git checkout and running git version & another one is build stage by printing maven stage and running maven version 
 
 Output:
 
@@ -287,4 +287,174 @@ OS name: "linux", version: "5.10.75-79.358.amzn2.x86_64", arch: "amd64", family:
 [Pipeline] End of Pipeline
 Finished: SUCCESS
 
+
+#####################################################
+
+pipeline {
+    agent any
+    tools {
+    maven 'maven-3.8.4'
+    }
+    stages{
+        stage('git checkout stage ') { 
+            steps {
+                echo 'git checkout'
+                git url:  'https://github.com/srinadhm/springboothello-CICD.git' 
+            }
+        }
+        stage('Build stage ') { 
+            steps {
+                echo 'maven stage'
+                sh 'mvn clean install' 
+            }
+        }
+    }
+}
+
+Started by user mupparaju srinadh
+[Pipeline] Start of Pipeline
+[Pipeline] node
+Running on Jenkins in /var/lib/jenkins/workspace/Java-Pipeline-Project
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Declarative: Tool Install)
+[Pipeline] tool
+[Pipeline] envVarsForTool
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (git checkout stage )
+[Pipeline] tool
+[Pipeline] envVarsForTool
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] echo
+git checkout
+[Pipeline] git
+The recommended git tool is: NONE
+No credentials specified
+Cloning the remote Git repository
+Cloning repository https://github.com/srinadhm/springboothello-CICD.git
+ > git init /var/lib/jenkins/workspace/Java-Pipeline-Project # timeout=10
+Fetching upstream changes from https://github.com/srinadhm/springboothello-CICD.git
+ > git --version # timeout=10
+ > git --version # 'git version 2.32.0'
+ > git fetch --tags --force --progress -- https://github.com/srinadhm/springboothello-CICD.git +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git config remote.origin.url https://github.com/srinadhm/springboothello-CICD.git # timeout=10
+ > git config --add remote.origin.fetch +refs/heads/*:refs/remotes/origin/* # timeout=10
+Avoid second fetch
+ > git rev-parse refs/remotes/origin/master^{commit} # timeout=10
+Checking out Revision af74454c512337cf4e486ee462f6ee33ab98a8b2 (refs/remotes/origin/master)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f af74454c512337cf4e486ee462f6ee33ab98a8b2 # timeout=10
+ > git branch -a -v --no-abbrev # timeout=10
+ > git checkout -b master af74454c512337cf4e486ee462f6ee33ab98a8b2 # timeout=10
+Commit message: "Update Jenkinsfile-NexusCI"
+First time build. Skipping changelog.
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Build stage )
+[Pipeline] tool
+[Pipeline] envVarsForTool
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] echo
+maven stage
+[Pipeline] sh
++ mvn clean install
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] -----------------< org.springframework:gs-spring-boot >-----------------
+[INFO] Building gs-spring-boot 0.1.0
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:3.0.0:clean (default-clean) @ gs-spring-boot ---
+[INFO] 
+[INFO] --- maven-resources-plugin:3.0.2:resources (default-resources) @ gs-spring-boot ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory /var/lib/jenkins/workspace/Java-Pipeline-Project/src/main/resources
+[INFO] skip non existing resourceDirectory /var/lib/jenkins/workspace/Java-Pipeline-Project/src/main/resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.7.0:compile (default-compile) @ gs-spring-boot ---
+[INFO] Changes detected - recompiling the module!
+[INFO] Compiling 2 source files to /var/lib/jenkins/workspace/Java-Pipeline-Project/target/classes
+[INFO] 
+[INFO] --- maven-resources-plugin:3.0.2:testResources (default-testResources) @ gs-spring-boot ---
+[INFO] Using 'UTF-8' encoding to copy filtered resources.
+[INFO] skip non existing resourceDirectory /var/lib/jenkins/workspace/Java-Pipeline-Project/src/test/resources
+[INFO] 
+[INFO] --- maven-compiler-plugin:3.7.0:testCompile (default-testCompile) @ gs-spring-boot ---
+[INFO] No sources to compile
+[INFO] 
+[INFO] --- maven-surefire-plugin:2.21.0:test (default-test) @ gs-spring-boot ---
+[INFO] No tests to run.
+[INFO] 
+[INFO] --- maven-jar-plugin:3.0.2:jar (default-jar) @ gs-spring-boot ---
+[INFO] Building jar: /var/lib/jenkins/workspace/Java-Pipeline-Project/target/gs-spring-boot-0.1.0.jar
+[INFO] 
+[INFO] --- spring-boot-maven-plugin:2.0.5.RELEASE:repackage (default) @ gs-spring-boot ---
+[INFO] 
+[INFO] --- maven-install-plugin:2.5.2:install (default-install) @ gs-spring-boot ---
+[INFO] Installing /var/lib/jenkins/workspace/Java-Pipeline-Project/target/gs-spring-boot-0.1.0.jar to /var/lib/jenkins/.m2/repository/org/springframework/gs-spring-boot/0.1.0/gs-spring-boot-0.1.0.jar
+[INFO] Installing /var/lib/jenkins/workspace/Java-Pipeline-Project/pom.xml to /var/lib/jenkins/.m2/repository/org/springframework/gs-spring-boot/0.1.0/gs-spring-boot-0.1.0.pom
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  2.610 s
+[INFO] Finished at: 2021-11-25T08:21:43Z
+[INFO] ------------------------------------------------------------------------
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] End of Pipeline
+Finished: SUCCESS
+
+
+
+[root@ip-172-31-92-237 opt]# cd /var/lib/jenkins/workspace/
+[root@ip-172-31-92-237 workspace]# ll
+total 16
+drwxr-xr-x 5 jenkins jenkins 4096 Nov 25 07:13 Java-FreeStyle
+drwxr-xr-x 5 jenkins jenkins 4096 Nov 25 07:14 Java-FreeStyle-demo
+drwxr-xr-x 5 jenkins jenkins 4096 Nov 25 07:35 Java-Maven-Project
+drwxr-xr-x 5 jenkins jenkins 4096 Nov 25 08:21 Java-Pipeline-Project
+drwxr-xr-x 2 jenkins jenkins    6 Nov 25 08:21 Java-Pipeline-Project@tmp
+[root@ip-172-31-92-237 workspace]# cd Java-Pipeline-Project
+[root@ip-172-31-92-237 Java-Pipeline-Project]# ll
+total 92
+-rw-r--r-- 1 jenkins jenkins  548 Nov 25 08:21 azure-pipelines.yml
+-rw-r--r-- 1 jenkins jenkins  335 Nov 25 08:21 docker-deploy.yml
+-rw-r--r-- 1 jenkins jenkins  124 Nov 25 08:21 Dockerfile
+-rw-r--r-- 1 jenkins jenkins  580 Nov 25 08:21 docker-run-deploy.yml
+-rw-r--r-- 1 jenkins jenkins  449 Nov 25 08:21 downloadartifact.yml
+-rw-r--r-- 1 jenkins jenkins   75 Nov 25 08:21 dummy.txt
+-rw-r--r-- 1 jenkins jenkins   29 Nov 25 08:21 hosts
+-rw-r--r-- 1 jenkins jenkins  505 Nov 25 08:21 Jenkinsfile-deployment
+-rw-r--r-- 1 jenkins jenkins  944 Nov 25 08:21 Jenkinsfile-DockerCD
+-rw-r--r-- 1 jenkins jenkins 1383 Nov 25 08:21 Jenkinsfile-DockerCI
+-rw-r--r-- 1 jenkins jenkins 1579 Nov 25 08:21 Jenkinsfile-Jfrog
+-rw-r--r-- 1 jenkins jenkins  325 Nov 25 08:21 Jenkinsfile-NexusCD
+-rw-r--r-- 1 jenkins jenkins 2479 Nov 25 08:21 Jenkinsfile-NexusCI
+-rw-r--r-- 1 jenkins jenkins  804 Nov 25 08:21 Jenkinsfile-SES
+-rw-r--r-- 1 jenkins jenkins  814 Nov 25 08:21 Jenkinsfile-SSM
+-rw-r--r-- 1 jenkins jenkins 1111 Nov 25 08:21 pom.xml
+-rw-r--r-- 1 jenkins jenkins 1114 Nov 25 08:21 README-Activeparameters.md
+-rw-r--r-- 1 jenkins jenkins  780 Nov 25 08:21 README-DockerCD.md
+-rw-r--r-- 1 jenkins jenkins 1865 Nov 25 08:21 README.md
+-rw-r--r-- 1 jenkins jenkins  427 Nov 25 08:21 README-NexusCD.md
+-rw-r--r-- 1 jenkins jenkins  497 Nov 25 08:21 README-NexusCI.md
+-rw-r--r-- 1 jenkins jenkins 1554 Nov 25 08:21 README-SES.md
+-rw-r--r-- 1 jenkins jenkins 1695 Nov 25 08:21 README-SSM.md
+drwxr-xr-x 3 jenkins jenkins   18 Nov 25 08:21 src
+drwxr-xr-x 6 jenkins jenkins  161 Nov 25 08:21 target
 
