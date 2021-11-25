@@ -38,3 +38,253 @@ Jenkins git webhook trigger
 Jenkins Master slave architecture advantages and flow  
 Procedure to setup master slave nodes 
 Pipeline example with master slave/node for both scripted and  declarative  
+
+Freestyle Project Creation
+---------------------------
+
+Java is required for jenkins
+
+we need to do ci for java project (continuous Integration)
+
+[root@ip-172-31-92-237 ~]# find / -name git
+/etc/selinux/targeted/active/modules/100/git
+/var/lib/jenkins/plugins/git
+/var/lib/jenkins/plugins/git/META-INF/maven/org.jenkins-ci.plugins/git
+/usr/bin/git
+/usr/share/doc/git-2.32.0/contrib/mw-to-git/bin-wrapper/git
+/usr/share/bash-completion/completions/git
+/usr/share/emacs/site-lisp/git
+/usr/libexec/git-core/git
+
+[root@ip-172-31-92-237 ~]# find / -name java
+/etc/pki/ca-trust/extracted/java
+/etc/pki/java
+/etc/java
+/etc/alternatives/java
+/var/lib/alternatives/java
+/usr/bin/java
+/usr/lib/java
+/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.302.b08-0.amzn2.0.1.x86_64/jre/bin/java
+/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.302.b08-0.amzn2.0.1.x86_64/bin/java
+/usr/lib/jvm/java
+/usr/lib/jvm-exports/java
+/usr/share/java
+
+[root@ip-172-31-92-237 ~]# find / -name maven
+/etc/maven
+
+As maven is present in /opt directory we need to tell the maven location in jenkins GUI 
+
+Manage Jenkins ----> Global Tool Configuration (Configure tools, their locations and automatic installers.) ----> 
+Maven --- > Maven installations :-   Name : maven-3.8.4 MAVEN_HOME : /opt/apache-maven-3.8.4 Uncheck Install automatically ----> save
+
+
+Anything under /usr/bin jenkins will identify automatically we dont want to mention explicitly
+
+Create a Project
+#########
+Dashboard ----> New Item ---> Enter an item name ---- Java-FreeStyle (Project name should be given ) ----> Click on Freestyle project ---> Ok
+
+
+
+
+This is the central feature of Jenkins. Jenkins will build your project, combining any SCM with any build system, and this can be even used for something other than software build.
+
+Sub sections in Free style Project
+1.General (for what purpose we created the project that should be the general) 
+Discard old builds
+GitHub project
+This build requires lockable resources
+This project is parameterized
+Throttle builds
+Disable this project
+Execute concurrent builds if necessary
+------------------------
+Description
+this project is created to checkout and build the java projects and we have string parameter for passing branch 
+
+2.Source Code Management (where is the sourcecode located  ) 
+
+None
+Git
+
+Select Git and provide Repository Url and Branch if it is private repo provide credentials as well.
+
+Repository URL 
+https://github.com/srinadhm/springboothello-CICD.git
+
+Credentials
+none (it is public repository)
+
+Branches to build
+*/master
+
+3.Build Triggers (When any commit is done in github automatically triggers job , scheduling for every 5-10 minutes any commit is done in github)
+Trigger builds remotely (e.g., from scripts)
+Build after other projects are built
+Build periodically
+GitHub hook trigger for GITScm polling
+Poll SCM
+
+4.Build Environment (Before build if we want to delete workspace , add timestamps to the console)
+Delete workspace before build starts
+Use secret text(s) or file(s)
+Abort the build if it's stuck
+Add timestamps to the Console Output
+Inspect build log for published Gradle build scans
+With Ant
+
+5.Build (for building this project which tool we can use or which command we can execute during build ,
+here after checking out the project we will use maven for building the project )
+
+for maven we need to select Invoke top-level Maven targets
+
+Maven Version : maven-3.8.4 (we added in global tool conf select that one in drop down) 
+Goals : clean install
+
+6.Post-build Actions (after the build do we need to send a email notification, delete workspace when the build is done, archive the artifacts
+
+
+Save ---->  Build Now 
+
+If we want to change Url or branch we can use Configure.
+
+###################################################################
+
+To create maven project we need to install maven plugin 
+
+Manage Jenkins ---> Manage Plugins (Add, remove, disable or enable plugins that can extend the functionality of Jenkins) ---> Available --> Maven Integration
+
+---> Install without restart
+
+Dashboard ----> New Item ---> Enter an item name ---- Java-Maven-Project  (Project name should be given if we are sure our project is 
+developed using maven directly we can create Maven project ) ----> Click on Maven project ---> Ok
+
+#######################################################
+
+
+Jenkins Pipeline Project 
+
+Dashboard ----> New Item ---> Enter an item name ---- Java-Pipeline-Project (Project name should be given) ----> Click on Pipeline ---> Ok
+
+Pipeline
+Orchestrates long-running activities that can span multiple build agents. Suitable for building pipelines (formerly known as workflows) and/or organizing complex activities that do not easily fit in free-style job type.
+
+
+1.General
+Description : this project is for spring boot application.
+
+Discard old builds
+Do not allow concurrent builds
+Do not allow the pipeline to resume if the controller restarts
+GitHub project
+Pipeline speed/durability override
+Preserve stashes from completed builds
+This project is parameterized
+Throttle builds
+
+2.Build Triggers
+
+Build after other projects are built
+Build periodically
+GitHub hook trigger for GITScm polling
+Poll SCM
+Disable this project
+Quiet period
+Trigger builds remotely (e.g., from scripts)
+
+3.Advanced Project Options
+
+Display Name 
+
+4.Pipeline
+
+Definition 
+
+Pipeline script
+Pipeline script from SCM ( we can write pipeline and push to github with usually names Jenkinsfile ) 
+
+
+In order to run the pipeline we need an agent if you dont have slave agents or slave labels only jenkins master is present
+we can mention agent as any
+
+pipeline {
+    agent any
+    tools {
+    maven 'maven-3.8.4'
+    }
+    stages{
+        stage('git checkout stage ') { 
+            steps {
+                echo 'git checkout'
+                sh 'git --version' 
+            }
+        }
+        stage('Build stage ') { 
+            steps {
+                echo 'maven stage'
+                sh 'mvn --version' 
+            }
+        }
+    }
+}
+
+Declarative Pipeline with git checkout stage and build stage.
+
+Output:
+
+Started by user mupparaju srinadh
+[Pipeline] Start of Pipeline
+[Pipeline] node
+Running on Jenkins in /var/lib/jenkins/workspace/Java-Pipeline-Project
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Declarative: Tool Install)
+[Pipeline] tool
+[Pipeline] envVarsForTool
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (git checkout stage )
+[Pipeline] tool
+[Pipeline] envVarsForTool
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] echo
+git checkout
+[Pipeline] sh
++ git --version
+git version 2.32.0
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Build stage )
+[Pipeline] tool
+[Pipeline] envVarsForTool
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] echo
+maven stage
+[Pipeline] sh
++ mvn --version
+Apache Maven 3.8.4 (9b656c72d54e5bacbed989b64718c159fe39b537)
+Maven home: /opt/apache-maven-3.8.4
+Java version: 1.8.0_302, vendor: Red Hat, Inc., runtime: /usr/lib/jvm/java-1.8.0-openjdk-1.8.0.302.b08-0.amzn2.0.1.x86_64/jre
+Default locale: en_US, platform encoding: UTF-8
+OS name: "linux", version: "5.10.75-79.358.amzn2.x86_64", arch: "amd64", family: "unix"
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] End of Pipeline
+Finished: SUCCESS
+
+
