@@ -29,7 +29,10 @@ active choice
 Pipeline example on string and active choice parameter
 Pipeline to push artifacts to nexus
 Pipeline to push docker image to docker hub
-Pipeline to push docker image to amazon ecr 
+Pipeline to push docker image to amazon ecr
+Pipeline to deploy application from kubernetes
+Pipeline to deploy from helm chart 
+Pipeline to generate sonarqube code coverage report 
 Pipeline to send pipeline status to email 
 Jenkins git webhook trigger 
 Jenkins Master slave architecture advantages and flow  
