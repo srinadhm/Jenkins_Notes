@@ -1,0 +1,37 @@
+Jenkins
+
+Advantages of jenkins
+
+What is continuous integration 
+
+What is continuous delivery
+
+Continuous Delivery v/s Deployment 
+
+Different types of Jobs or Projects we can create
+1.Freestyle
+2.Maven ( by default wont be there plugin has to be installed)
+3.Pipeline ( applicable for stages in the project checkout,build,build docker image,
+push the image to ecr/docker hub,push artifacts to nexus,code quality)
+4.Multi branch pipeline
+
+Pipeline types
+1.Scripted 
+2.Declarative
+
+Pipeline integration with git,maven,nexus,sonarqube,docker,ansible,kubernetes
+
+different parameters 
+string 
+file
+active choice
+
+Pipeline example on string and active choice parameter
+Pipeline to push artifacts to nexus
+Pipeline to push docker image to docker hub
+Pipeline to push docker image to amazon ecr 
+Pipeline to send pipeline status to email 
+Jenkins git webhook trigger 
+Jenkins Master slave architecture advantages and flow  
+Procedure to setup master slave nodes 
+Pipeline example with master slave/node for both scripted and  declarative  
