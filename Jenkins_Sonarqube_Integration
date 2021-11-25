@@ -124,9 +124,30 @@ pipeline{
                     sh "${ tool ("sonarqube-scanner")}/sonar-scanner -Dsonar.projectKey=hellospringboot -Dsonar.projectName=hellospringboot "
                 }
             }
-        }   
+        }
+        stage("Quality Gate") {
+            steps {
+              timeout(time: 1, unit: 'HOURS') {
+                waitForQualityGate abortPipeline: true
+                }
+            }
+        }
     }
 }
+
+##############################
+
+
+In order to decide job is pass or fail , code quality is passed or failed we need to get response from sonarqube back to jenkins 
+for that we need to define a webhook in sonarqube GUI  with jenkins IP address 
+
+Administration ----> Configuration ----> Webhooks ---> Create ---> Create Webhook Name: jenkins-sonar-webhook URL : http://54.173.172.116:8080/sonarqube-webhook/ (jenkins IP:8080) ---> Create
+
+if the job is taking more time in getting response from sonarqube, if any vulnerability occurs or by any reason Quality Gate failed  
+at that time we are saying abortPipeline: true
+
+Manual maven integration with sonarqube will be using maven commands , but in jenkins automated with sonarqube cli scanner by including sonar scanner properties 
+like project key and project name.
 
 Output :
 
