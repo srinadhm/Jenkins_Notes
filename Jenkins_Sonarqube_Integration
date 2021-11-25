@@ -1,0 +1,132 @@
+##############################
+
+we should not directly run java -jar jarfilename
+
+before that we need to check our code is good quality or bad quality, to check code quality we need to integrate maven with sonarqube 
+once code quality is good we need to store those artifacts (jar/war) in jfrog or nexus repository.
+if code quality is bad we need to fail the build.
+
+for this we need to integrate maven with sonarqube and deploy artifacts to nexus.Regardless of job pass or fail we need to send email notification for jenkins job owners or stake holders.
+
+Sonarqube Server --- java 11 for sonarqube 8, java 8 for sonarqube 7 
+
+To check code quality or analyze the project we need to generate sonar token
+
+6aac2b1deaa54c92df94833de22bd84be9056479 
+
+Jenkins need to know the sonarqube url and sonarqube runner to check the code quality 
+
+
+Pipeline stages
+############
+
+1.Get code from github
+2.Build the code
+3.Analyse the code
+4.Get the results of code analysis
+5.If success upload artifacts to nexus/jfrog repository
+6.Based on result decide to pass or fail and send email notification in case of failure
+
+#####################
+
+in java if we want to use vm options we need to use -D 
+
+-Dkeyname=value
+
+Jenkins Integration with Sonarqube
+
+Server1 -- Jenkins
+Server2 -- Sonarqube (Java 11 and Sonarqube Installation is enough 
+
+
+Jenkins Server --- java,maven,git,sonar-cli (sonarqube-scanner),jenkins
+
+Install sonar-scanner (this is replacement for mvn sonar:sonar)
+----------------------
+cd /opt
+wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.4.0.2170-linux.zip
+unzip sonar-scanner-cli-4.4.0.2170-linux.zip
+cd sonar-scanner-4.4.0.2170-linux/conf/sonar-scanner.properties
+
+In sonar-scanner.properties we need to mention where is our sonarqube is running 
+
+
+vi /opt/sonar-scanner-4.4.0.2170-linux/conf/sonar-scanner.properties 
+
+sonar.host.url=http://54.172.151.208:9000
+
+
+save changes and exit 
+
+
+Integrate/Install  SonarQube Scanner plugin in jenkins GUI 
+
+We need to add the things in jenkins to integrate with sonar 
+
+1.We need to mention token in manage credentials
+
+Manage Jenkins --- > Manage Credentials ---> Stores scoped to Jenkins ---> Jenkins ---> Global credentials ---> Add Credentials ---> Kind : Secret text 
+Scope : Global Secret : sonar_token  ID : jenkins-sonar-token Description : jenkins-sonar-token ---> Ok 
+
+
+
+2.We need to project name project key project src dir parameters to the sonar scanner 
+
+3.We need to add sonarqube url in Configure system
+
+SonarQube servers ----> SonarQube installations Name : sonarqube-9.x Server URL : http://54.172.151.208:9000 Server authentication token : jenkins-sonar-token
+
+4.After adding sonar scanner installation path should be given in Global tool Configuration. 
+
+SonarQube Scanner ---> SonarQube Scanner installations ---> SonarQube Scanner  Name : sonarqube-scanner SONAR_RUNNER_HOME :  /opt/sonar-scanner-4.4.0.2170-linux/bin
+
+
+withSonarQubeEnv(installationName: 'sonarqube-9.x', credentialsId: 'jenkins-sonar-token') {
+sh "${ tool ("sonarqube-scanner")}/sonar-scanner -Dsonar.projectKey=hellospringboot -Dsonar.projectName=hellospringboot -Dsonar.java.binaries=target/classes -Dsonar.sources=src -Dsonar.sourceEncoding=UTF-8"
+
+We can add the parameters in 
+
+vi /opt/sonar-scanner-4.4.0.2170-linux/conf/sonar-scanner.properties  
+
+#----- Default source code encoding
+sonar.sourceEncoding=UTF-8
+sonar.sources=src
+sonar.projectKey=hellospringboot
+sonar.projectName=hellospringboot
+sonar.java.binaries=target/classes
+
+maven equivalent command 
+
+mvn sonar:sonar -Dsonar.host.url=http://54.204.94.224:9000  -Dsonar.login=20b16826873641fa4848c6eba7e0297f60734384 -Dsonar.java.binaries=target/classes
+
+Declarative pipeline 
+------------------
+
+pipeline{
+    agent any
+    tools {
+        maven 'maven-3.8.4'
+    }
+    stages{
+        stage("SCM Git Checkout"){
+            steps{
+                git 'https://github.com/cloudtechmasters/sonarqube.git'
+            }
+        }
+        stage("Build Artifact") {
+            steps{
+                sh "mvn clean package"
+            }
+        }
+        stage("Deploy to Sonar") {
+            steps{
+                withSonarQubeEnv(installationName: 'sonarqube-9.x', credentialsId: 'jenkins-sonar-token') {
+                    sh "${ tool ("sonarqube-scanner")}/sonar-scanner -Dsonar.projectKey=hellospringboot -Dsonar.projectName=hellospringboot "
+                }
+            }
+        }   
+    }
+}
+
+Output :
+
