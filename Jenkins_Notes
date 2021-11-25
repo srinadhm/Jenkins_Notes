@@ -29,17 +29,19 @@ active choice
 Jenkins Master slave architecture advantages and flow  
 Procedure to setup master slave nodes
 
-Pipeline example on string and active choice parameter
-Pipeline to push artifacts to nexus
+Pipeline example on string and active choice parameter 
+Pipeline to push artifacts to nexus 
 Pipeline to push docker image to docker hub
-Pipeline to deploy or run docker image from ansible.
-Pipeline to push docker image to amazon ecr
+Pipeline to push docker image to amazon ecr 
+Pipeline to send pipeline status to email 
 Pipeline to deploy application from kubernetes
 Pipeline to deploy from helm chart 
 Pipeline to generate sonarqube code coverage report 
-Pipeline to send pipeline status to email 
-Jenkins git webhook trigger  
-Pipeline example with master slave/node for both scripted and  declarative  
+Jenkins git webhook trigger 
+Pipeline with master slave/node by scripted or declarative 
+Pipeline to deploy or run docker image from ansible.
+Pipeline with Grrovy Script to  get list of branches in drop down using active choice parameter 
+Building your CI_CD Pipeline on AWS_29 AWS Code Deploy  
 
 Freestyle Project Creation
 ---------------------------
