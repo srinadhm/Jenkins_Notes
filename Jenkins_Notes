@@ -823,8 +823,20 @@ run spring boot jar file
 2021-11-25 09:49:10.721  INFO 14523 --- [           main] hello.Application                        : Started Application in 3.353 seconds (JVM running for 3.84)
 
 
+Continuous Integration Stages
+-------------------------------
 
+1.Get the code from github
+2.Build the code 
 
+Continuous Delivery Stages
 
+1..We need to run the final artifacts (jar/war) 
 
+Scripted v/s Declarative
+--------------------------
+If we have any custom requirement where we have to written lot of logic , prefer scripted pipeline if we are find default behaviour we can prefer declarative 
+
+Declarative pipeline starts with pipeline 
+Scripted pipeline starts with node
 
