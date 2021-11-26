@@ -338,6 +338,16 @@ vi settings.xml
     </server>
 
 
+mvn deploy:deploy-file \
+  -DgroupId=org.springframework \
+  -DartifactId=gs-spring-boot \
+  -Dversion=0.2.0 \
+  -Dpackaging=jar \
+  -Dfile=/opt/gs-spring-boot-0.2.0.jar \
+  -DrepositoryId=Nexus \
+  -Durl=http://18.212.161.107:8081/repository/maven-releases/
+  
+  
 Declarative Pipeline with maven deploy -D vm options
 
 pipeline {
