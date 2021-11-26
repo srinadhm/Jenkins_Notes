@@ -844,3 +844,173 @@ If we have any custom requirement where we have to written lot of logic , prefer
 Declarative pipeline starts with pipeline 
 Scripted pipeline starts with node
 
+########################################
+
+
+Jenkins Pipeline 
+
+1.Declarative
+2.Scripted
+
+Jenkins Pipeline
+Jenkins Pipeline (or simply "Pipeline") is a suite of plugins which supports implementing and integrating continuous delivery pipelines into Jenkins. ... The definition of a Jenkins Pipeline is typically written into a text file (called a Jenkinsfile ) which in turn is checked into a project's source control repository.
+
+Jenkins pipeline
+Jenkins Pipeline is a stack of Jenkins plugins and other tools which helps implementing and continuous integration and delivery pipelines. In Jenkins, Pipelines are written in DSL code which implements this continuous integration and delivery pipeline jobs.
+
+Get the pipeline plugin from the Jenkins plugin market place and install into the Jenkins instance. For the same, Go to Manage Jenkins > Manage Plugins. > Available tab, search for “build pipeline”.
+
+This Jenkins pipeline can be built using Web UI or Scripted Jenkinsfile. This Jenkinsfile is written with Groovy DSL and updated in configuration page on the Jenkins job. Overall, Jenkinsfile can also be called pipeline as code.
+
+Types of Jenkins pipeline
+There are two type of Jenkins pipeline based on which format the Jenkinsfile is written.
+
+Declarative pipeline
+Scripted pipeline
+Declarative Pipeline
+The Declarative pipeline is a new feature that is added to create the pipeline. This is basically written in a Jenkinsfile which can be stored into a source code management system such as Git. Declarative pipelines is an ideal solution for the simple continuous delivery pipeline as it has very limited and pre-defined structure.
+
+Lets see the structure and syntax of the Declarative pipeline.
+
+The Agent is where the whole pipeline runs. Example, Docker. The Agent has following parameters:
+
+any – Which mean the whole pipeline will run on any available agent.
+none – Which mean all the stages under the block will have to declared with agent separately.
+label –  this is just a label for the Jenkins environment
+docker –  this is to run the pipeline in Docker environment.
+The Declarative pipeline code will looks like this:
+
+pipeline {
+  agent { label 'node-1' }
+  stages {
+    stage('Source') { 
+      steps {
+        git 'https://github.com/digitalvarys/jenkins-tutorials.git''
+      }
+    }
+    stage('Compile') { 
+      tools {
+        gradle 'gradle4'
+      }
+      steps {
+        sh 'gradle clean compileJava test'
+      }
+    }
+  }
+}
+Scripted Pipeline
+The scripted pipeline is a traditional way of writing the Jenkins pipeline as code. Ideally, Scripted pipeline is written in Jenkins file on web UI of Jenkins. Unlike Declarative pipeline, the scripted pipeline strictly uses groovy based syntax. Since this, The scripted pipeline provides huge control over the script and can manipulate the flow of script extensively. This helps developers to develop advance and complex pipeline as code.
+
+Let us see the structure and syntax of the scripted pipeline
+
+Node Block:
+Node is the part of the Jenkins architecture where Node or agent node will run the part of the workload of the jobs and master node will handle the configuration of the job. So this will be defined in the first place as
+
+node {
+}
+Stage Block:
+Stage block can be a single stage or multiple as the task goes. And it may have common stages like
+
+Cloning the code from SCM
+Building the project
+Running the Unit Test cases
+Deploying the code
+Other functional and performance tests.
+So the stages can be written as mentioned below:
+
+stage {
+}
+
+
+Declarative pipeline : 
+Declarative pipeline break down stages into individual stages that can containe multipe steps.
+We can prefer declarative pipeline if it having support for plugins 
+
+pipeline{
+    agent { label 'jenkins-slave' }
+    stages{
+        stage('git version'){
+            steps{
+                sh 'git --version'
+            }
+        }
+        stage('java version'){
+            steps{
+                sh 'java -version'
+            }
+        }
+        stage('git checkout'){
+            steps{
+                git 'https://github.com/cloudtechmasters/springboohello-CICD.git'
+            }
+        }
+    }
+}
+
+
+
+
+Whenever writing a pipeline we need to decide how many stages we need and in each stage what steps we need to do
+
+For Declarative starting with pipeline , and to run the pipeline we need agent either it would be master or slave node label 
+if we dont have any slave node, only master is present then we can mention any or label name master 
+
+My jenkins is used by 10 projects
+
+I have only one jenkins machine which is called jenkins master if job is running 4-5 jobs are running , other job will go pending state.
+we are going to add slave machine which are called jenkins  nodes we can run jobs on slaves instead of running on master.
+
+1.Getting the code from github
+2.Build the code 
+
+pipeline{
+    agent any 
+    tools {
+    maven 'maven-3.8.4'
+    }
+    stages {
+       stage('git checkout stage'){
+           steps{
+               git 'https://github.com/cloudtechmasters/springboohello-CICD.git'
+           }
+       }
+       stage('build  stage'){
+           steps{
+               sh  'mvn clean package'
+           }
+       }
+    }
+    
+}
+
+###########################
+
+Scripted pipeline starts with node and don't have any steps under stage  
+
+node{
+    stage('git version'){
+            sh 'git --version'
+        }
+        stage('java version'){
+            sh 'java -version'
+        }
+        stage('git checkout'){
+            git 'https://github.com/srinadhm/springboothello-CICD.git'
+        }
+}
+
+Scripted Pipeline use groovy code and  reference to jenkins pipeline DSL within the stage elements without need for steps.
+We can prefer scripted pipeline if any custom requirement has come. 
+
+node('jenkins-slave'){
+    stage('git version'){
+            sh 'git --version'
+        }
+        stage('java version'){
+            sh 'java -version'
+        }
+        stage('git checkout'){
+            git 'https://github.com/cloudtechmasters/springboohello-CICD.git'
+        }
+}
+
