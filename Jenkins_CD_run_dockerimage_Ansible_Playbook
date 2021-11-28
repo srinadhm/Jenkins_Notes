@@ -1,0 +1,19 @@
+Ansible playbook to run docker image container from docker hub 
+----------------------------------------------------------
+---
+- hosts : localhost
+  tasks :
+    - name : start docker container
+      docker_container:
+        name : springboohelloworldjenkinsci
+        image: srinadhdocker/springboohelloworldjenkinsci:4
+        state: started
+        restart: yes
+        ports:
+         - "8888:8080"
+
+####################
+
+docker pull srinadhdocker/springboohelloworldjenkinsci:4
+
+ansible-playbook run-docker-container.yml --extra-vars '{"docker_img_tag":"4"}'  
