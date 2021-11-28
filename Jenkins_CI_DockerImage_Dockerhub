@@ -1,0 +1,34 @@
+Jenkins Continuos pipeline to clone the repo from git and build the project using maven , build the images using docker connecting to docker hub with credentials 
+and push the image to dockerhub.
+
+pipeline{
+    agent any 
+    tools { 
+        maven 'maven-3.8.3' 
+    }
+    stages{
+        stage('git checkout'){
+            steps{
+                git 'https://github.com/cloudtechmasters/springboohello-CICD.git'
+            }
+        }
+        stage('Build Maven'){
+            steps{
+                sh 'mvn clean package'
+            }
+        }
+        stage("Docker Image"){
+            steps{
+                sh "docker build -t srinadhdocker/springboohelloworldjenkinsci:${BUILD_NUMBER} ."
+            }
+        }
+        stage("Docker Push"){
+            steps{
+                withCredentials([usernamePassword(credentialsId: 'dockerhubcredentials', passwordVariable: 'password', usernameVariable: 'username')]) {
+                    sh "docker login -u ${username} -p ${password}"
+                }
+                sh "docker push srinadhdocker/springboohelloworldjenkinsci:${BUILD_NUMBER}"
+            }
+        }
+    }
+}
